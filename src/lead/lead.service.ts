@@ -14,4 +14,16 @@ export class LeadService {
     const lead = this.leadRepo.create(data);
     return await this.leadRepo.save(lead);
   }
+
+  async findByPhone(from: string) {
+    return await this.leadRepo.findOne({ where: { phone: from } });
+  }
+
+  async update(lead: Lead) {
+    return this.leadRepo.save(lead);
+  }
+
+  async findAll() {
+    return await this.leadRepo.find();
+  }
 }

@@ -17,14 +17,9 @@ export class BotService {
     message?: string;
   }) {
     const from = body?.From ?? body?.from ?? '';
-    const message = body?.Body ?? body?.message ?? '';
+    const message = (body?.Body ?? body?.message ?? '').trim();
 
-    if (/\b(ol[aá]|oi|bom dia)\b/i.test(message)) {
-      return this.sendResponse(
-        from,
-        `Olá! Sou o assistente da Construção a Seco. Digite:\n1️⃣ - Nossos serviços\n2️⃣ - Falar com um consultor\n3️⃣ - Solicitar orçamento`,
-      );
-    }
+    const existingLead = await this.leadService.findByPhone(from);
 
     if (/1/.test(message)) {
       return this.sendResponse(
@@ -34,18 +29,38 @@ export class BotService {
     }
 
     if (/2/.test(message)) {
-      return this.sendResponse(
+      await this.sendResponse(
         from,
         `Encaminhando você para um especialista... Aguarde um momento.`,
       );
+
+      await this.leadService.create({
+        name: 'Aguardando preenchimento',
+        phone: from,
+        projectType: 'Solicitou atendimento com especialista',
+        location: 'Não informado',
+        step: 'done',
+      });
+
+      const consultantNumber = process.env.CONSULTANT_WHATSAPP_NUMBER;
+
+      if (consultantNumber) {
+        await this.sendResponse(
+          consultantNumber,
+          `Novo cliente deseja falar com um especialista. Número: ${from}`,
+        );
+      }
+
+      return;
     }
 
-    if (/3/.test(message)) {
+    if (/3/.test(message) && !existingLead) {
       await this.leadService.create({
-        name: 'Não informado',
+        name: '',
         phone: from,
-        projectType: 'Não informado',
-        location: 'Não informado',
+        projectType: '',
+        location: '',
+        step: 'name',
       });
       return this.sendResponse(
         from,
@@ -53,9 +68,45 @@ export class BotService {
       );
     }
 
+    if (!existingLead) {
+      return this.sendResponse(
+        from,
+        `Olá! Sou o assistente da Construção a Seco. Digite:
+        1️⃣ - Nossos serviços
+        2️⃣ - Falar com um consultor
+        3️⃣ - Solicitar orçamento`,
+      );
+    }
+    if (existingLead.step === 'name') {
+      existingLead.name = message;
+      existingLead.step = 'projectType';
+      await this.leadService.update(existingLead);
+      return this.sendResponse(
+        from,
+        `Qual o tipo de projeto você deseja realizar?`,
+      );
+    }
+
+    if (existingLead.step === 'projectType') {
+      existingLead.projectType = message;
+      existingLead.step = 'location';
+      await this.leadService.update(existingLead);
+      return this.sendResponse(from, `Qual a cidade/estado do projeto?`);
+    }
+
+    if (existingLead.step === 'location') {
+      existingLead.location = message;
+      existingLead.step = 'done';
+      await this.leadService.update(existingLead);
+      return this.sendResponse(
+        from,
+        `Obrigado! Em breve entraremos em contato para enviar o orçamento.`,
+      );
+    }
+
     return this.sendResponse(
       from,
-      `Desculpe, não entendi. Responda com 1, 2 ou 3.`,
+      `Aguarde o retorno do nosso time. Obrigado!`,
     );
   }
 

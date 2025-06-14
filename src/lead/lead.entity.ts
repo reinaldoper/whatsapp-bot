@@ -3,6 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Index,
 } from 'typeorm';
 
 @Entity()
@@ -10,17 +11,21 @@ export class Lead {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ default: '' })
   name: string;
 
   @Column()
+  @Index({ unique: true })
   phone: string;
 
-  @Column()
+  @Column({ default: '' })
   projectType: string;
 
-  @Column()
+  @Column({ default: '' })
   location: string;
+
+  @Column({ default: 'name' })
+  step: string;
 
   @CreateDateColumn()
   createdAt: Date;
