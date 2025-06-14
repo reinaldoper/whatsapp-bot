@@ -1,7 +1,7 @@
-🤖 WhatsApp Bot - NestJS
+## 🤖 WhatsApp Bot - NestJS
 Este projeto é um bot inteligente desenvolvido com NestJS que automatiza o atendimento via WhatsApp utilizando a API da Twilio. Ele é ideal para empresas que desejam agilizar a captação de leads e oferecer uma primeira resposta automatizada para orçamentos ou direcionamento ao consultor.
 
-🧠 Tecnologias Utilizadas
+### 🧠 Tecnologias Utilizadas
 - NestJS: Framework moderno e escalável para Node.js.
 - TypeORM: ORM para integração com bancos relacionais.
 - PostgreSQL: Banco de dados utilizado para armazenar os leads.
@@ -9,17 +9,18 @@ Este projeto é um bot inteligente desenvolvido com NestJS que automatiza o aten
 - Docker: Para levantar o banco de dados localmente.
 - Ngrok: Para expor sua aplicação local na internet durante o desenvolvimento.
 
-📋 Como funciona o fluxo do bot?
-1. O usuário envia uma saudação (ex: "oi", "olá", "bom dia").
+---
 
-2. O bot responde com as opções:
+📋 Como funciona o fluxo do bot?
+
+1. O bot responde com as opções:
 
 ```bash
 1️⃣ - Nossos serviços
 2️⃣ - Falar com um consultor
 3️⃣ - Solicitar orçamento
 ```
-3. Se escolher:
+2. Se escolher:
 
 1: o bot envia uma breve descrição dos serviços oferecidos.
 
@@ -31,9 +32,9 @@ Este projeto é um bot inteligente desenvolvido com NestJS que automatiza o aten
 - Tipo de projeto
 - Cidade/Estado
 
-4. Os dados são salvos no banco de dados para acompanhamento posterior.
+3. Os dados são salvos no banco de dados para acompanhamento posterior.
 
-5. Existe uma rota protegida que permite o dono da aplicação visualizar todos os leads cadastrados.
+4. Existe uma rota protegida que permite o dono da aplicação visualizar todos os leads cadastrados.
 
 ## 🚀 Como rodar o projeto
 
